@@ -1,9 +1,9 @@
 const mineflayer = require('mineflayer')
 
-const HOST = 'IP_SERVER_CUA_BAN'
-const PORT = 25565
+const HOST = 'nova.pikamc.vn'
+const PORT = 25010
 const TOTAL = 1000
-const DELAY = 400 // ms giữa mỗi bot
+const DELAY = 50 // ms giữa mỗi bot
 
 const messages = [
   'hello',
