@@ -1,52 +1,46 @@
 const mineflayer = require('mineflayer')
 
-const HOST = 'nova.pikamc.vn'
-const PORT = 25010
+const HOST = 'IP_SERVER_CUA_BAN'
+const PORT = 25565
+const TOTAL = 1000
+const DELAY = 400 // ms giữa mỗi bot
 
-const TOTAL_BOTS = 20
-const JOIN_DELAY = 1200
+const messages = [
+  'hello',
+  'hi all',
+  'test',
+  'ping',
+  'checking lag',
+  'spawn ok',
+  'joined',
+  'nice server'
+]
 
-function randomPassword(len = 8) {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  let p = ''
-  for (let i = 0; i < len; i++) {
-    p += chars[Math.floor(Math.random() * chars.length)]
-  }
-  return p
+function randMsg() {
+  return messages[Math.floor(Math.random() * messages.length)]
 }
 
-function createBot(id) {
-  const username = `Bot${id}`
-  const password = randomPassword()
+for (let i = 0; i < TOTAL; i++) {
+  setTimeout(() => {
+    const bot = mineflayer.createBot({
+      host: HOST,
+      port: PORT,
+      username: 'Bot' + i,
+      version: '1.21.1'
+    })
 
-  const bot = mineflayer.createBot({
-    host: HOST,
-    port: PORT,
-    username
-  })
+    bot.once('spawn', () => {
+      setTimeout(() => {
+        bot.chat(randMsg())
+      }, 3000 + Math.random() * 5000)
+    })
 
-  bot.once('spawn', () => {
-    setTimeout(() => {
-      try {
-        bot.chat(`/register ${password} ${password}`)
-      } catch {}
-    }, 3000)
+    bot.on('end', () => {
+      console.log(`Bot${i} disconnected`)
+    })
 
-    setTimeout(() => {
-      try {
-        bot.chat(`/login ${password}`)
-      } catch {}
-    }, 6000)
-  })
-
-  bot.on('end', () => {
-    setTimeout(() => createBot(id), 20000)
-  })
-
-  bot.on('error', () => {})
-  bot.on('kicked', () => {})
-}
-
-for (let i = 0; i < TOTAL_BOTS; i++) {
-  setTimeout(() => createBot(i), i * JOIN_DELAY)
+    bot.on('error', (err) => {
+      console.log(`Bot${i}: ${err.message}`)
+    })
+  }, i * DELAY)
 }
